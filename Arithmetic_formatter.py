@@ -58,12 +58,14 @@
 # tests will run automatically whenever you hit the "run" button.
 # Alternatively you may run the tests by inputting pytest in the console.
 import re
-problems=["32 + 8", "1 - 3801", "9999 + 9999", "523 - 49"]
+problems=['3801 - 2', '123 + 49']
 def arithmetic_arranger(problems,cal=False):
   operand=[]
   operator=[]
   required_space=[]
   calulated_value=[]
+  arranged_problems=""
+  spc=0
   if len(problems)>5:
     return "Error: Too many problems."
   for problem in problems:
@@ -75,7 +77,6 @@ def arithmetic_arranger(problems,cal=False):
       return "Error: Numbers cannot be more than four digits."
     operand.append(re.findall(r'[0-9]+',problem))
     operator.append(re.findall(r'[+-]+',problem))
-  print(operator)
   for op in range(len(operator)):
     required_space.append(max(len(operand[op][0]),len(operand[op][1])))
     if cal:
@@ -84,11 +85,21 @@ def arithmetic_arranger(problems,cal=False):
       else:
          temp=int(operand[op][0])-int(operand[op][1])
       calulated_value.append(temp)
-  print(required_space)
-  print(calulated_value)
-  if not cal:
-    for i in range(4):
-      spc=required_space[i]-len(operand[i][0])
-      temp_val=" "*2+" "*spc+str(operand[i][0])+" "*4
-    print(temp_val)
-print(arithmetic_arranger(problems))
+  for i in range(4):
+    for j in range(len(operator)):
+      if i==0:
+        spc=required_space[j]-len(operand[j][0])
+        arranged_problems+=" "*2+" "*spc+str(operand[j][0])+" "*4
+      elif i==1:
+        spc=required_space[j]-len(operand[j][1])
+        arranged_problems+=str(operator[j][0])+" "*1+" "*spc+str(operand[j][1])+" "*4
+      elif i==2:
+        arranged_problems+="-"*(required_space[j]+2)+" "*4
+      elif i==3 and cal:
+        arranged_problems+=" "*((required_space[j]+2)-len(str(calulated_value[j])))+str(calulated_value[j])+" "*4
+    if i<3:
+      arranged_problems+="\n"
+    elif i==3 and cal:
+      arranged_problems+="\n"
+  return arranged_problems
+print(arithmetic_arranger(problems,False))
