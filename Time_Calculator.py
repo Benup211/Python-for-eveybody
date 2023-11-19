@@ -40,6 +40,44 @@
 #   number.
 import re
 def add_time(start, duration, day_of_week=None):
-	print("body of Time Calculator")
-    # return new_time
-add_time("11:06 PM", "2:02")
+  weeks = [
+      "sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
+      "saturday"
+  ]
+  hour_hand = re.findall(r'([0-9]+):', start + duration)
+  minute_hand = re.findall(r':([0-9]+)', start + duration)
+  time_of_day = re.findall(r'[A-Z]+$', start)
+  total_minute = int(minute_hand[0]) + int(minute_hand[1])
+  total_hour = int(hour_hand[0]) + int(hour_hand[1])
+  day_later = 0
+  if total_minute / 60 > 1.0:
+    total_minute = total_minute % 60
+    total_hour += 1
+  if total_hour % 24 > 1:
+    day_later = int(total_hour / 24)
+    total_hour %= 24
+  if total_hour > 11:
+    if time_of_day[0] == "PM":
+      day_later += 1
+      time_of_day[0] = "AM"
+    else:
+      time_of_day[0] = "PM"
+  if total_hour > 12:
+    total_hour = total_hour % 12
+  if len(str(total_minute)) == 1:
+    total_minute = "0" + str(total_minute)
+  if day_of_week == None:
+    day_of_week = ""
+  else:
+    day_of_week = day_of_week.lower()
+    weeks_pos = weeks.index(day_of_week)
+    weeks_pos = (weeks_pos + day_later) % 7
+    day_of_week = ", " + weeks[weeks_pos].capitalize()
+  if day_later == 0:
+    day_later = ""
+  elif day_later == 1:
+    day_later = str(" (next day)")
+  else:
+    day_later = " (" + str(day_later) + " days later)"
+  return f"{total_hour}:{total_minute} {time_of_day[0]}{day_of_week}{day_later}"
+print(add_time("8:16 PM", "466:02", "tuesday"))
