@@ -58,7 +58,7 @@
 # tests will run automatically whenever you hit the "run" button.
 # Alternatively you may run the tests by inputting pytest in the console.
 import re
-problems=['3801 - 2', '123 + 49']
+problems=['98 + 35', '3801 - 2', '45 + 43', '123 + 49']
 def arithmetic_arranger(problems,cal=False):
   operand=[]
   operator=[]
@@ -66,14 +66,15 @@ def arithmetic_arranger(problems,cal=False):
   calulated_value=[]
   arranged_problems=""
   spc=0
+  spc_continuous=4
   if len(problems)>5:
     return "Error: Too many problems."
   for problem in problems:
     if not re.search(r'\s[+-]\s',problem):
       return "Error: Operator must be '+' or '-'."
-    if not re.search(r'^[0-9]*\s.\s[0-9]*',problem):
+    if not re.search(r'^[0-9]*\s.\s[0-9]*$',problem):
       return "Error: Numbers must only contain digits."
-    if not re.search(r'^[0-9]{1,4}\s.\s[0-9]{1,4}',problem):
+    if not re.search(r'^[0-9]{1,4}\s.\s[0-9]{1,4}$',problem):
       return "Error: Numbers cannot be more than four digits."
     operand.append(re.findall(r'[0-9]+',problem))
     operator.append(re.findall(r'[+-]+',problem))
@@ -86,20 +87,23 @@ def arithmetic_arranger(problems,cal=False):
          temp=int(operand[op][0])-int(operand[op][1])
       calulated_value.append(temp)
   for i in range(4):
+    spc_continuous=4
     for j in range(len(operator)):
+      if j==len(operator)-1:
+        spc_continuous=0
       if i==0:
         spc=required_space[j]-len(operand[j][0])
-        arranged_problems+=" "*2+" "*spc+str(operand[j][0])+" "*4
+        arranged_problems+=" "*2+" "*spc+str(operand[j][0])+" "*spc_continuous
       elif i==1:
         spc=required_space[j]-len(operand[j][1])
-        arranged_problems+=str(operator[j][0])+" "*1+" "*spc+str(operand[j][1])+" "*4
+        arranged_problems+=str(operator[j][0])+" "*1+" "*spc+str(operand[j][1])+" "*spc_continuous
       elif i==2:
-        arranged_problems+="-"*(required_space[j]+2)+" "*4
+        arranged_problems+="-"*(required_space[j]+2)+" "*spc_continuous
       elif i==3 and cal:
-        arranged_problems+=" "*((required_space[j]+2)-len(str(calulated_value[j])))+str(calulated_value[j])+" "*4
-    if i<3:
+        arranged_problems+=" "*((required_space[j]+2)-len(str(calulated_value[j])))+str(calulated_value[j])+" "*spc_continuous
+    if i<2:
       arranged_problems+="\n"
-    elif i==3 and cal:
+    elif i==2 and cal:
       arranged_problems+="\n"
   return arranged_problems
-print(arithmetic_arranger(problems,False))
+print(arithmetic_arranger(problems,True))
